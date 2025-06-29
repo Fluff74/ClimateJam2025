@@ -14,6 +14,8 @@ namespace FloodBuds
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        private Player player;
+
         #region Textures
 
         private Texture2D tempAsset;
@@ -22,7 +24,7 @@ namespace FloodBuds
 
         #region Draw Locations
 
-        private Rectangle tempRect;
+
 
         #endregion
 
@@ -44,8 +46,6 @@ namespace FloodBuds
 
         protected override void Initialize()
         {
-            tempRect = new Rectangle(200, 200, 200, 200);
-
             base.Initialize();
         }
 
@@ -54,12 +54,16 @@ namespace FloodBuds
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             tempAsset = Content.Load<Texture2D>($"TempAsset");
+
+            player = new Player(tempAsset);
         }
 
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            player.Update(Keyboard.GetState());
 
             base.Update(gameTime);
         }
@@ -70,7 +74,7 @@ namespace FloodBuds
 
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(tempAsset, tempRect, Color.White);
+            player.Draw(_spriteBatch);
 
             _spriteBatch.End();
 
