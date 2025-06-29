@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Flood_Buds
+namespace FloodBuds
 {
     public class Game1 : Game
     {

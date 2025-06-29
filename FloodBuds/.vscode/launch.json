@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
       {
-        "name": "C#: Flood_Buds Debug",
+        "name": "C#: FloodBuds Debug",
         "type": "dotnet",
         "request": "launch",
-        "projectPath": "${workspaceFolder}/Flood_Buds.csproj"
+        "projectPath": "${workspaceFolder}/FloodBuds.csproj"
       }
     ],
   }
