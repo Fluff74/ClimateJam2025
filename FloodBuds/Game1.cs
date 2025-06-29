@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace FloodBuds
 {
@@ -13,8 +14,19 @@ namespace FloodBuds
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private Random rng = new Random();
 
         private Player player;
+        private KeyboardState kbs; // The current state of the keyboard.
+        private KeyboardState pkbs; // The previous state of the keyboard.
+
+        private enum GameState
+        {
+            MainMenu,
+            Game,
+            GameOver
+        }
+        private GameState gameState;
 
         #region Textures
 
@@ -46,6 +58,8 @@ namespace FloodBuds
 
         protected override void Initialize()
         {
+            gameState = GameState.MainMenu;
+
             base.Initialize();
         }
 
@@ -60,11 +74,14 @@ namespace FloodBuds
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            kbs = Keyboard.GetState();
+
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || kbs.IsKeyDown(Keys.Escape))
                 Exit();
 
-            player.Update(Keyboard.GetState());
+            player.Update(Keyboard.GetState(), rng.Next(1, 11), 0);
 
+            pkbs = kbs;
             base.Update(gameTime);
         }
 
@@ -74,7 +91,26 @@ namespace FloodBuds
 
             _spriteBatch.Begin();
 
-            player.Draw(_spriteBatch);
+            switch (gameState)
+            {
+                case GameState.MainMenu:
+
+                    player.Draw(_spriteBatch);
+
+                    break;
+
+                case GameState.Game:
+
+                    player.Draw(_spriteBatch);
+
+                    break;
+
+                case GameState.GameOver:
+
+
+
+                    break;
+            }
 
             _spriteBatch.End();
 
