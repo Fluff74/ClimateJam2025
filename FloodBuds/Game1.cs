@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace FloodBuds
 {
-    // Joshua Smith - 
+    // Joshua Smith - Aaron Phan
     // 06/29/2025
     //
     // We're making a game for the Climate Jam 2025. This won't be submitted for the compilation, as it is not made in Unity.
