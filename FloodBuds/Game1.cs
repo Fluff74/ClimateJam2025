@@ -79,7 +79,8 @@ namespace FloodBuds
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || kbs.IsKeyDown(Keys.Escape))
                 Exit();
 
-            player.Update(Keyboard.GetState(), rng.Next(1, 11), 0);
+            
+            player.Update(Keyboard.GetState(), rng.Next(-4, 4), rng.Next(-4, 4));
 
             pkbs = kbs;
             base.Update(gameTime);
