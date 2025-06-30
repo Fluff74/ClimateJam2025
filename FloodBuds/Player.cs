@@ -31,6 +31,34 @@ namespace FloodBuds
 
             hitbox.Y += yWind;
             hitbox.X += xWind;
+
+            // Makes sure the player doesn't move offscreen.
+            if(hitbox.X < 0)
+            {
+                hitbox.X = 0;
+            }
+            if(hitbox.X > 1855)
+            {
+                hitbox.X = 1855;
+            }
+            if(hitbox.Y < 0)
+            {
+                hitbox.Y = 0;
+            }
+            if(hitbox.Y > 1015)
+            {
+                hitbox.Y = 1015;
+            }
+        }
+
+        /// <summary>
+        /// Checks to see if anything is colliding with the player.
+        /// </summary>
+        /// <param name="other"> The other rectangle we're checking. </param>
+        /// <returns> Whether or not the player is colliding with anything. </returns>
+        public bool IsColliding(Rectangle other)
+        {
+            return hitbox.Intersects(other);
         }
 
         public void Draw(SpriteBatch sb)

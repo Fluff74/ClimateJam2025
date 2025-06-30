@@ -17,6 +17,7 @@ namespace FloodBuds
         private Random rng = new Random();
 
         private Player player;
+        private Rescue rescue;
         private KeyboardState kbs; // The current state of the keyboard.
         private KeyboardState pkbs; // The previous state of the keyboard.
 
@@ -73,6 +74,8 @@ namespace FloodBuds
             tempAsset = Content.Load<Texture2D>($"TempAsset");
 
             player = new Player(tempAsset);
+            rescue = new Rescue(tempAsset);
+            rescue.Active = true;
         }
 
         protected override void Update(GameTime gameTime)
@@ -97,6 +100,18 @@ namespace FloodBuds
                 case GameState.Game:
 
                     player.Update(Keyboard.GetState(), xWind, yWind); // Updates the player's location based on wind and input.
+
+                    // Move the rescue ship while it is active.
+                    if (rescue.Active)
+                    {
+                        rescue.Move();
+                    }
+
+                    // If the player touches the rescue ship, do this.
+                    if (player.IsColliding(rescue.Hitbox))
+                    {
+                        // Functionality
+                    }
 
                     break;
 
@@ -128,6 +143,7 @@ namespace FloodBuds
                 case GameState.Game:
 
                     player.Draw(_spriteBatch);
+                    rescue.Draw(_spriteBatch);
 
                     break;
 
