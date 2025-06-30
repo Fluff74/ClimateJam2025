@@ -20,6 +20,9 @@ namespace FloodBuds
         private KeyboardState kbs; // The current state of the keyboard.
         private KeyboardState pkbs; // The previous state of the keyboard.
 
+        private int xWind;
+        private int yWind;
+
         private enum GameState
         {
             MainMenu,
@@ -79,8 +82,30 @@ namespace FloodBuds
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || kbs.IsKeyDown(Keys.Escape))
                 Exit();
 
-            
-            player.Update(Keyboard.GetState(), rng.Next(-4, 4), rng.Next(-4, 4));
+            switch (gameState)
+            {
+                case GameState.MainMenu:
+
+                    if (SingleKeyPress(Keys.Enter))
+                    {
+                        RandomizeWind();
+                        gameState = GameState.Game;
+                    }
+
+                    break;
+
+                case GameState.Game:
+
+                    player.Update(Keyboard.GetState(), xWind, yWind); // Updates the player's location based on wind and input.
+
+                    break;
+
+                case GameState.GameOver:
+
+
+
+                    break;
+            }
 
             pkbs = kbs;
             base.Update(gameTime);
@@ -116,6 +141,25 @@ namespace FloodBuds
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// Checks to see if the player pushed a key once.
+        /// </summary>
+        /// <param name="key"> The key we're checking. </param>
+        /// <returns> Whether or not it was pushed once. </returns>
+        private bool SingleKeyPress(Keys key)
+        {
+            return kbs.IsKeyDown(key) && pkbs.IsKeyUp(key);
+        }
+
+        /// <summary>
+        /// Randomizes the wind speed.
+        /// </summary>
+        private void RandomizeWind()
+        {
+            xWind = rng.Next(-4, 5);
+            yWind = rng.Next(-4, 5);
         }
     }
 }

@@ -24,10 +24,13 @@ namespace FloodBuds
         /// <param name="yWind"> The force of the wind in the Y-Axis. </param>
         public void Update(KeyboardState kb, int xWind, int yWind)
         {
-            if (kb.IsKeyDown(Keys.W)) { hitbox.Y -= 5 - yWind; }
-            if (kb.IsKeyDown(Keys.A)) { hitbox.X -= 5 - xWind; }
-            if (kb.IsKeyDown(Keys.S)) { hitbox.Y += 5 + yWind; }
-            if (kb.IsKeyDown(Keys.D)) { hitbox.X += 5 + xWind; }
+            if (kb.IsKeyDown(Keys.W)) { hitbox.Y -= 7; }
+            if (kb.IsKeyDown(Keys.A)) { hitbox.X -= 7; }
+            if (kb.IsKeyDown(Keys.S)) { hitbox.Y += 7; }
+            if (kb.IsKeyDown(Keys.D)) { hitbox.X += 7; }
+
+            hitbox.Y += yWind;
+            hitbox.X += xWind;
         }
 
         public void Draw(SpriteBatch sb)
