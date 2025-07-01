@@ -127,21 +127,7 @@ namespace FloodBuds
         /// <returns> Whether or not the debris has left the bounds of the screen. </returns>
         public bool CheckDespawn()
         {
-            switch (direction)
-            {
-                case Direction.Left:
-                    return hitbox.X > 1920;
-
-                case Direction.Right:
-                    return hitbox.X < 0 - hitbox.Width;
-
-                case Direction.Top:
-                    return hitbox.Y > 1080;
-
-                case Direction.Bottom:
-                    return hitbox.Y < 0 - hitbox.Height;
-            }
-            return false;
+            return hitbox.X > 1920 || hitbox.X < 0 - hitbox.Width || hitbox.Y > 1080 || hitbox.Y < 0 - hitbox.Height;
         }
 
         /// <summary>

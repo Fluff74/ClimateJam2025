@@ -24,6 +24,7 @@ namespace FloodBuds
         private Matrix screenRes; // This will automatically scale our game to other people's screen sizes.
         private int score;
         private int highscore;
+        private int diffIncrement;
 
         private int xWind;
         private int yWind;
@@ -114,8 +115,6 @@ namespace FloodBuds
                         gameState = GameState.Game;
                         budsList.Add(new Buds(tempAsset));
                         debrisList.Add(new Debris(score, driftWood, tire, rock));
-                        debrisList.Add(new Debris(score, driftWood, tire, rock));
-                        debrisList.Add(new Debris(score, driftWood, tire, rock));
                     }
 
                     break;
@@ -169,6 +168,12 @@ namespace FloodBuds
                             budsList.RemoveAt(i);
                             i--;
 
+                            // Decrement score if a bud despawns.
+                            if(score > 0)
+                            {
+                                score--;
+                            }
+
                             budsList.Add(new Buds(tempAsset));
                         }
 
@@ -178,6 +183,13 @@ namespace FloodBuds
                             budsList.RemoveAt(i);
                             i--;
                             score++;
+
+                            diffIncrement++;
+                            if(diffIncrement >= 10)
+                            {
+                                debrisList.Add(new Debris(score, driftWood, tire, rock));
+                                diffIncrement = 0;
+                            }
 
                             budsList.Add(new Buds(tempAsset));
                         }
