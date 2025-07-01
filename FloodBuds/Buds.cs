@@ -72,6 +72,9 @@ namespace FloodBuds
 
         public void GenerateValues()
         {
+
+            direction = (Direction)rng.Next(0, 4);
+            
             switch (direction)
             {
                 // Left side
