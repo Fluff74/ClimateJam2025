@@ -21,6 +21,7 @@ namespace FloodBuds
         private Rescue rescue;
         private KeyboardState kbs; // The current state of the keyboard.
         private KeyboardState pkbs; // The previous state of the keyboard.
+        private Matrix screenRes; // This will automatically scale our game to other people's screen sizes.
 
         private int xWind;
         private int yWind;
@@ -55,8 +56,8 @@ namespace FloodBuds
 
             #region Screen Resolution
 
-            _graphics.PreferredBackBufferWidth = 1920;
-            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             Window.IsBorderless = true;
             _graphics.ApplyChanges();
 
@@ -67,6 +68,7 @@ namespace FloodBuds
         {
             gameState = GameState.MainMenu;
             debrisList = new List<Debris>();
+            screenRes = Matrix.CreateScale((float)_graphics.PreferredBackBufferWidth / 1920, (float)_graphics.PreferredBackBufferHeight / 1080, 1.0f);
 
             base.Initialize();
         }
@@ -155,7 +157,7 @@ namespace FloodBuds
         {
             GraphicsDevice.Clear(Color.DarkBlue);
 
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(transformMatrix: screenRes);
 
             switch (gameState)
             {
