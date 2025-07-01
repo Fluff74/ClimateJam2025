@@ -2,10 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace FloodBuds
 {
-    // Joshua Smith - Aaron Phan
+    // Joshua Smith - Aaron Phan - Oliver Dingus
     // 06/29/2025
     //
     // We're making a game for the Climate Jam 2025. This won't be submitted for the compilation, as it is not made in Unity.
@@ -23,6 +24,8 @@ namespace FloodBuds
 
         private int xWind;
         private int yWind;
+
+        private List<Debris> debrisList;
 
         private enum GameState
         {
@@ -63,6 +66,7 @@ namespace FloodBuds
         protected override void Initialize()
         {
             gameState = GameState.MainMenu;
+            debrisList = new List<Debris>();
 
             base.Initialize();
         }
@@ -73,7 +77,7 @@ namespace FloodBuds
 
             tempAsset = Content.Load<Texture2D>($"TempAsset");
 
-            player = new Player(tempAsset);
+            player = new Player(Content.Load<Texture2D>($"FB_Raft"));
             rescue = new Rescue(tempAsset);
             rescue.Active = true;
         }
@@ -113,6 +117,27 @@ namespace FloodBuds
                         // Functionality
                     }
 
+                    // Handles the debris.
+                    for(int i = 0; i < debrisList.Count; i++)
+                    {
+                        debrisList[i].Move(xWind, yWind);
+
+                        // Remove debris that leaves the bounds of the screen.
+                        if (debrisList[i].CheckDespawn())
+                        {
+                            debrisList.RemoveAt(i);
+                            i--;
+                        }
+
+                        // Checks if the player has hit any debris.
+                        else if (player.IsColliding(debrisList[i].Hitbox))
+                        {
+                            player.Reset();
+                            debrisList.Clear();
+                            gameState = GameState.GameOver;
+                        }
+                    }
+
                     break;
 
                 case GameState.GameOver:
@@ -144,6 +169,11 @@ namespace FloodBuds
 
                     player.Draw(_spriteBatch);
                     rescue.Draw(_spriteBatch);
+
+                    for(int i = 0; i < debrisList.Count; i++)
+                    {
+                        debrisList[i].Draw(_spriteBatch);
+                    }
 
                     break;
 

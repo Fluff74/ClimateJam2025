@@ -61,6 +61,18 @@ namespace FloodBuds
             return hitbox.Intersects(other);
         }
 
+        /// <summary>
+        /// Resets the position of the player.
+        /// </summary>
+        public void Reset()
+        {
+            hitbox.Location = new Point(927, 507);
+        }
+
+        /// <summary>
+        /// Draws the player to the screen.
+        /// </summary>
+        /// <param name="sb"> The SpriteBatch we're drawing with. </param>
         public void Draw(SpriteBatch sb)
         {
             sb.Draw(sprite, hitbox, Color.White);
