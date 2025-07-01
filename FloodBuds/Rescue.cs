@@ -19,6 +19,10 @@ namespace FloodBuds
         /// </summary>
         public bool Active { get; set; }
 
+        /// <summary>
+        /// The constructor for the rescue boat.
+        /// </summary>
+        /// <param name="sprite"> The sprite for the rescue boat. </param>
         public Rescue(Texture2D sprite)
         {
             this.sprite = sprite;
@@ -46,7 +50,7 @@ namespace FloodBuds
         /// <param name="sb"> The SpriteBatch we're drawing with. </param>
         public void Draw(SpriteBatch sb)
         {
-            sb.Draw(sprite, hitbox, Color.Orange);
+            sb.Draw(sprite, hitbox, Color.White);
         }
     }
 }

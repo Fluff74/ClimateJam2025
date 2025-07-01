@@ -9,6 +9,10 @@ namespace FloodBuds
         private Texture2D sprite;
         private Rectangle hitbox;
 
+        /// <summary>
+        /// The constructor for a player object.
+        /// </summary>
+        /// <param name="sprite"> The player's sprite. </param>
         public Player(Texture2D sprite)
         {
             this.sprite = sprite;

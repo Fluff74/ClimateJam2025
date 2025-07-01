@@ -41,6 +41,11 @@ namespace FloodBuds
         }
         private Direction direction;
 
+        /// <summary>
+        /// The constructor for a debris object.
+        /// </summary>
+        /// <param name="score"> The current score. </param>
+        /// <param name="sprites"> The sprites for debris. </param>
         public Debris(int score, params Texture2D[] sprites)
         {
             this.sprites = sprites;

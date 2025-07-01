@@ -39,12 +39,13 @@ namespace FloodBuds
         #region Textures
 
         private Texture2D tempAsset;
+        private Texture2D fbLogo;
 
         #endregion
 
         #region Draw Locations
 
-
+        private Rectangle fbLogoDrawRect;
 
         #endregion
 
@@ -69,6 +70,7 @@ namespace FloodBuds
             gameState = GameState.MainMenu;
             debrisList = new List<Debris>();
             screenRes = Matrix.CreateScale((float)_graphics.PreferredBackBufferWidth / 1920, (float)_graphics.PreferredBackBufferHeight / 1080, 1.0f);
+            fbLogoDrawRect = new Rectangle(0, -60, 700, 700);
 
             base.Initialize();
         }
@@ -78,9 +80,10 @@ namespace FloodBuds
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             tempAsset = Content.Load<Texture2D>($"TempAsset");
+            fbLogo = Content.Load<Texture2D>($"FB_Logo");
 
             player = new Player(Content.Load<Texture2D>($"FB_Raft"));
-            rescue = new Rescue(tempAsset);
+            rescue = new Rescue(Content.Load<Texture2D>($"FB_Rescue"));
             rescue.Active = true;
         }
 
@@ -164,6 +167,7 @@ namespace FloodBuds
                 case GameState.MainMenu:
 
                     player.Draw(_spriteBatch);
+                    _spriteBatch.Draw(fbLogo, fbLogoDrawRect, Color.White);
 
                     break;
 
