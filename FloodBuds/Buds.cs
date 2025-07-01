@@ -10,9 +10,16 @@ namespace FloodBuds
     {
         private Random rng = new Random();
         private Texture2D sprite;
+
+        /// <summary>
+        /// Hitbox of the buds.
+        /// </summary>
         private Rectangle hitbox;
         public Rectangle Hitbox { get { return hitbox; } set { Hitbox = value; } }
-
+        
+        /// <summary>
+        /// The direction where buds will come from.
+        /// </summary>
         private enum Direction
         {
             Left,
@@ -23,6 +30,10 @@ namespace FloodBuds
 
         private Direction direction;
 
+        /// <summary>
+        /// The default constructor of Buds.
+        /// </summary>
+        /// <param name="sprite">The sprite of the buds</param>
         public Buds(Texture2D sprite)
         {
             this.sprite = sprite;
@@ -31,6 +42,9 @@ namespace FloodBuds
             GenerateValues();
         }
 
+        /// <summary>
+        /// Moves the buds. 
+        /// </summary>
         public void Move()
         {
             switch (direction)
@@ -53,6 +67,10 @@ namespace FloodBuds
             }
         }
 
+        /// <summary>
+        /// Determines if the buds have gone past the bounds of the screen.
+        /// </summary>
+        /// <returns>True if the buds are out of bounds, false otherwise.</returns>
         public bool CheckDespawn()
         {
             switch (direction)
@@ -72,11 +90,14 @@ namespace FloodBuds
             return false;
         }
 
+        /// <summary>
+        /// Generates needed values for buds.
+        /// </summary>
         public void GenerateValues()
         {
 
             direction = (Direction)rng.Next(0, 4);
-            
+
             switch (direction)
             {
                 // Left side
@@ -112,6 +133,10 @@ namespace FloodBuds
                     break;
             }
         }
+        /// <summary>
+        ///Draws the buds.
+        /// </summary>
+        /// <param name="sb">The SpriteBatch we're drawing with.</param>
         public void Draw(SpriteBatch sb)
         {
             sb.Draw(sprite, hitbox, Color.White);
