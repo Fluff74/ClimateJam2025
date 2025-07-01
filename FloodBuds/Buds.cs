@@ -31,8 +31,24 @@ namespace FloodBuds
 
         public void Move()
         {
-            hitbox.X += 5;
-            hitbox.Y += 5;
+            switch (direction)
+            {
+                case Direction.Left:
+                    hitbox.X += 5;
+                    break;
+
+                case Direction.Right:
+                    hitbox.X -= 5;
+                    break;
+
+                case Direction.Top:
+                    hitbox.Y += 5;
+                    break;
+
+                case Direction.Bottom:
+                    hitbox.Y -= 5;
+                    break;
+            }
         }
 
         public bool CheckDespawn()
