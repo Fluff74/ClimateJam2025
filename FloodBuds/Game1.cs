@@ -22,11 +22,14 @@ namespace FloodBuds
         private KeyboardState kbs; // The current state of the keyboard.
         private KeyboardState pkbs; // The previous state of the keyboard.
         private Matrix screenRes; // This will automatically scale our game to other people's screen sizes.
+        private int score;
+        private int highscore;
 
         private int xWind;
         private int yWind;
 
         private List<Debris> debrisList;
+        private List<Buds> budsList;
 
         private enum GameState
         {
@@ -40,6 +43,9 @@ namespace FloodBuds
 
         private Texture2D tempAsset;
         private Texture2D fbLogo;
+        private Texture2D tire;
+        private Texture2D driftWood;
+        private Texture2D rock;
 
         #endregion
 
@@ -71,6 +77,8 @@ namespace FloodBuds
             debrisList = new List<Debris>();
             screenRes = Matrix.CreateScale((float)_graphics.PreferredBackBufferWidth / 1920, (float)_graphics.PreferredBackBufferHeight / 1080, 1.0f);
             fbLogoDrawRect = new Rectangle(0, -60, 700, 700);
+            score = 0;
+            budsList = new List<Buds>();
 
             base.Initialize();
         }
@@ -81,10 +89,12 @@ namespace FloodBuds
 
             tempAsset = Content.Load<Texture2D>($"TempAsset");
             fbLogo = Content.Load<Texture2D>($"FB_Logo");
+            tire = Content.Load<Texture2D>($"FB_Tire");
+            driftWood = Content.Load<Texture2D>($"FB_DriftWood");
+            rock = Content.Load<Texture2D>($"FB_Rock");
 
             player = new Player(Content.Load<Texture2D>($"FB_Raft"));
             rescue = new Rescue(Content.Load<Texture2D>($"FB_Rescue"));
-            rescue.Active = true;
         }
 
         protected override void Update(GameTime gameTime)
@@ -102,6 +112,10 @@ namespace FloodBuds
                     {
                         RandomizeWind();
                         gameState = GameState.Game;
+                        budsList.Add(new Buds(tempAsset));
+                        debrisList.Add(new Debris(score, driftWood, tire, rock));
+                        debrisList.Add(new Debris(score, driftWood, tire, rock));
+                        debrisList.Add(new Debris(score, driftWood, tire, rock));
                     }
 
                     break;
@@ -131,6 +145,7 @@ namespace FloodBuds
                         if (debrisList[i].CheckDespawn())
                         {
                             debrisList.RemoveAt(i);
+                            debrisList.Add(new Debris(score, driftWood, tire, rock));
                             i--;
                         }
 
@@ -140,6 +155,31 @@ namespace FloodBuds
                             player.Reset();
                             debrisList.Clear();
                             gameState = GameState.GameOver;
+                        }
+                    }
+
+                    // Handles the buds.
+                    for (int i = 0; i < budsList.Count; i++)
+                    {
+                        budsList[i].Move();
+
+                        // Remove buds that leave the bounds of the screen.
+                        if (budsList[i].CheckDespawn())
+                        {
+                            budsList.RemoveAt(i);
+                            i--;
+
+                            budsList.Add(new Buds(tempAsset));
+                        }
+
+                        // Checks if the player has saved any buds.
+                        else if (player.IsColliding(budsList[i].Hitbox))
+                        {
+                            budsList.RemoveAt(i);
+                            i--;
+                            score++;
+
+                            budsList.Add(new Buds(tempAsset));
                         }
                     }
 
@@ -179,6 +219,11 @@ namespace FloodBuds
                     for(int i = 0; i < debrisList.Count; i++)
                     {
                         debrisList[i].Draw(_spriteBatch);
+                    }
+
+                    for (int i = 0; i < budsList.Count; i++)
+                    {
+                        budsList[i].Draw(_spriteBatch);
                     }
 
                     break;

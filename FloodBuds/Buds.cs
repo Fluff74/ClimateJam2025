@@ -27,6 +27,8 @@ namespace FloodBuds
         {
             this.sprite = sprite;
             hitbox = new Rectangle(0, 0, 65, 65);
+
+            GenerateValues();
         }
 
         public void Move()
