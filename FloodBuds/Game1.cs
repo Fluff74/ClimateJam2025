@@ -65,6 +65,9 @@ namespace FloodBuds
         private Vector2 scoreVec;
         private Vector2 capacityVec;
         private Vector2 windVec;
+        private Vector2 startInstructions;
+        private Vector2 quitInstructions;
+        private Vector2 highscoreVec;
 
         #endregion
 
@@ -99,6 +102,9 @@ namespace FloodBuds
             scoreVec = new Vector2(20, 930);
             capacityVec = new Vector2(20, 980);
             windVec = new Vector2(20, 1030);
+            highscoreVec = new Vector2(1200, 300);
+            startInstructions = new Vector2(1340, 740);
+            quitInstructions = new Vector2(1000, 900);
 
             windTimer = rng.Next(12, 18);
             rescueTimer = rng.Next(12, 18);
@@ -274,6 +280,9 @@ namespace FloodBuds
 
                     player.Draw(_spriteBatch);
                     _spriteBatch.Draw(fbLogo, fbLogoDrawRect, Color.White);
+                    _spriteBatch.DrawString(arial, $"Press 'enter' to start!", startInstructions, Color.Orange);
+                    _spriteBatch.DrawString(arial, $"Quit any time with `escape`", quitInstructions, Color.Orange);
+                    _spriteBatch.DrawString(arial, $"Highscore: {highscore}", highscoreVec, Color.Yellow);
 
                     break;
 
@@ -301,6 +310,7 @@ namespace FloodBuds
                 case GameState.GameOver:
 
                     _spriteBatch.Draw(gameOver, gameOverDrawRect, Color.White);
+                    _spriteBatch.DrawString(arial, $"       Press 'enter' to \nreturn to the main menu", startInstructions, Color.Orange);
 
                     break;
             }
