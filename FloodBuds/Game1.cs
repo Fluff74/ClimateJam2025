@@ -268,7 +268,7 @@ namespace FloodBuds
                                 score--;
                             }
 
-                            budsList.Add(new Buds(tempAsset));
+                            budsList.Add(new Buds(buds));
                         }
 
                         // Checks if the player has saved any buds.
