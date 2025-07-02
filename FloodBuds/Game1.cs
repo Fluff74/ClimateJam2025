@@ -33,10 +33,6 @@ namespace FloodBuds
         private double windTimer;
         private double rescueTimer;
 
-        private Button play;
-        private Button quit;
-        private Button next;
-
         private int xWind;
         private int yWind;
 
@@ -125,10 +121,6 @@ namespace FloodBuds
 
             player = new Player(Content.Load<Texture2D>($"FB_Raft"));
             rescue = new Rescue(Content.Load<Texture2D>($"FB_Rescue"));
-
-            play = new Button(new Rectangle(1500, 600, 300, 125), tempAsset);
-            next = new Button(new Rectangle(1600, 500, 300, 125), tempAsset);
-            quit = new Button(new Rectangle(1300, 800, 300, 125), tempAsset);
         }
 
         protected override void Update(GameTime gameTime)
@@ -144,18 +136,12 @@ namespace FloodBuds
                 case GameState.MainMenu:
 
                     // Start game functionality.
-                    if (SingleKeyPress(Keys.Enter) || play.Update(ms, pms))
+                    if (SingleKeyPress(Keys.Enter))
                     {
                         RandomizeWind();
                         gameState = GameState.Game;
                         budsList.Add(new Buds(tempAsset));
                         debrisList.Add(new Debris(score, driftWood, tire, rock));
-                    }
-
-                    // Quit button functionality
-                    if (quit.Update(ms, pms))
-                    {
-                        Exit();
                     }
 
                     break;
@@ -263,7 +249,7 @@ namespace FloodBuds
 
                 case GameState.GameOver:
 
-                    if (SingleKeyPress(Keys.Enter) || next.Update(ms, pms))
+                    if (SingleKeyPress(Keys.Enter))
                     {
                         gameState = GameState.MainMenu;
                     }
@@ -288,8 +274,6 @@ namespace FloodBuds
 
                     player.Draw(_spriteBatch);
                     _spriteBatch.Draw(fbLogo, fbLogoDrawRect, Color.White);
-                    play.Draw(_spriteBatch);
-                    quit.Draw(_spriteBatch);
 
                     break;
 
@@ -317,7 +301,6 @@ namespace FloodBuds
                 case GameState.GameOver:
 
                     _spriteBatch.Draw(gameOver, gameOverDrawRect, Color.White);
-                    next.Draw(_spriteBatch);
 
                     break;
             }
