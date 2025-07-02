@@ -17,6 +17,7 @@ namespace FloodBuds
         private SpriteBatch _spriteBatch;
         private Random rng = new Random();
 
+        private SpriteFont arial;
         private Player player;
         private Rescue rescue;
         private KeyboardState kbs; // The current state of the keyboard.
@@ -25,6 +26,10 @@ namespace FloodBuds
         private int score;
         private int highscore;
         private int diffIncrement;
+        private int currBuds; // The amount of buds onboard.
+        private string windDir;
+        private double windTimer;
+        private double rescueTimer;
 
         private int xWind;
         private int yWind;
@@ -44,6 +49,7 @@ namespace FloodBuds
 
         private Texture2D tempAsset;
         private Texture2D fbLogo;
+        private Texture2D gameOver;
         private Texture2D tire;
         private Texture2D driftWood;
         private Texture2D rock;
@@ -53,6 +59,10 @@ namespace FloodBuds
         #region Draw Locations
 
         private Rectangle fbLogoDrawRect;
+        private Rectangle gameOverDrawRect;
+        private Vector2 scoreVec;
+        private Vector2 capacityVec;
+        private Vector2 windVec;
 
         #endregion
 
@@ -78,8 +88,18 @@ namespace FloodBuds
             debrisList = new List<Debris>();
             screenRes = Matrix.CreateScale((float)_graphics.PreferredBackBufferWidth / 1920, (float)_graphics.PreferredBackBufferHeight / 1080, 1.0f);
             fbLogoDrawRect = new Rectangle(0, -60, 700, 700);
+            gameOverDrawRect = new Rectangle(80, 20, 700, 700);
             score = 0;
+            diffIncrement = 0;
+            currBuds = 0;
             budsList = new List<Buds>();
+
+            scoreVec = new Vector2(20, 930);
+            capacityVec = new Vector2(20, 980);
+            windVec = new Vector2(20, 1030);
+
+            windTimer = rng.Next(12, 18);
+            rescueTimer = rng.Next(12, 18);
 
             base.Initialize();
         }
@@ -88,8 +108,11 @@ namespace FloodBuds
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            arial = Content.Load<SpriteFont>($"Arial");
+
             tempAsset = Content.Load<Texture2D>($"TempAsset");
             fbLogo = Content.Load<Texture2D>($"FB_Logo");
+            gameOver = Content.Load<Texture2D>($"FB_GameOver");
             tire = Content.Load<Texture2D>($"FB_Tire");
             driftWood = Content.Load<Texture2D>($"FB_DriftWood");
             rock = Content.Load<Texture2D>($"FB_Rock");
@@ -123,16 +146,31 @@ namespace FloodBuds
 
                     player.Update(Keyboard.GetState(), xWind, yWind); // Updates the player's location based on wind and input.
 
+                    windTimer -= gameTime.ElapsedGameTime.TotalSeconds;
+                    rescueTimer -= gameTime.ElapsedGameTime.TotalSeconds;
+
+                    if(windTimer < 0)
+                    {
+                        RandomizeWind();
+                        windTimer = rng.Next(12, 18);
+                    }
+                    if(rescueTimer < 0)
+                    {
+                        rescue.Active = true;
+                        rescueTimer = rng.Next(17, 23);
+                    }
+
                     // Move the rescue ship while it is active.
                     if (rescue.Active)
                     {
                         rescue.Move();
                     }
 
-                    // If the player touches the rescue ship, do this.
+                    // If the player touches the rescue ship, deposit buds.
                     if (player.IsColliding(rescue.Hitbox))
                     {
-                        // Functionality
+                        score += currBuds;
+                        currBuds = 0;
                     }
 
                     // Handles the debris.
@@ -153,6 +191,13 @@ namespace FloodBuds
                         {
                             player.Reset();
                             debrisList.Clear();
+                            budsList.Clear();
+                            score = 0;
+                            currBuds = 0;
+                            diffIncrement = 0;
+                            windTimer = rng.Next(12, 18);
+                            rescueTimer = rng.Next(12, 18);
+
                             gameState = GameState.GameOver;
                         }
                     }
@@ -178,11 +223,12 @@ namespace FloodBuds
                         }
 
                         // Checks if the player has saved any buds.
-                        else if (player.IsColliding(budsList[i].Hitbox))
+                        else if (player.IsColliding(budsList[i].Hitbox) && currBuds < 7)
                         {
                             budsList.RemoveAt(i);
                             i--;
-                            score++;
+
+                            currBuds++;
 
                             diffIncrement++;
                             if(diffIncrement >= 10)
@@ -199,7 +245,10 @@ namespace FloodBuds
 
                 case GameState.GameOver:
 
-
+                    if (SingleKeyPress(Keys.Enter))
+                    {
+                        gameState = GameState.MainMenu;
+                    }
 
                     break;
             }
@@ -225,9 +274,6 @@ namespace FloodBuds
 
                 case GameState.Game:
 
-                    player.Draw(_spriteBatch);
-                    rescue.Draw(_spriteBatch);
-
                     for(int i = 0; i < debrisList.Count; i++)
                     {
                         debrisList[i].Draw(_spriteBatch);
@@ -238,11 +284,18 @@ namespace FloodBuds
                         budsList[i].Draw(_spriteBatch);
                     }
 
+                    rescue.Draw(_spriteBatch);
+                    player.Draw(_spriteBatch);
+
+                    _spriteBatch.DrawString(arial, $"Score: {score}", scoreVec, Color.White);
+                    _spriteBatch.DrawString(arial, $"Buds Capacity: {currBuds}/7", capacityVec, Color.White);
+                    _spriteBatch.DrawString(arial, $"Wind Direction: {windDir}", windVec, Color.White);
+
                     break;
 
                 case GameState.GameOver:
 
-
+                    _spriteBatch.Draw(gameOver, gameOverDrawRect, Color.White);
 
                     break;
             }
@@ -269,6 +322,46 @@ namespace FloodBuds
         {
             xWind = rng.Next(-4, 5);
             yWind = rng.Next(-4, 5);
+
+            if(yWind < 0)
+            {
+                windDir = "North";
+                if(xWind < 0)
+                {
+                    windDir += "west";
+                }
+                else if(xWind > 0)
+                {
+                    windDir += "east";
+                }
+            }
+            else if (yWind > 0)
+            {
+                windDir = "South";
+                if (xWind < 0)
+                {
+                    windDir += "west";
+                }
+                else if (xWind > 0)
+                {
+                    windDir += "east";
+                }
+            }
+            else
+            {
+                if (xWind < 0)
+                {
+                    windDir += "West";
+                }
+                else if (xWind > 0)
+                {
+                    windDir += "East";
+                }
+                else
+                {
+                    windDir = "None!";
+                }
+            }
         }
     }
 }
