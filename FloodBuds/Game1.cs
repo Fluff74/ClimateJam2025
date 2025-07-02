@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.IO;
 using System.Collections.Generic;
 
 namespace FloodBuds
@@ -109,6 +110,30 @@ namespace FloodBuds
             windTimer = rng.Next(12, 18);
             rescueTimer = rng.Next(12, 18);
 
+            if (File.Exists($"Highscore"))
+            {
+                FileStream file = File.OpenRead($"Highscore");
+                BinaryReader reader = new BinaryReader(file);
+
+                try
+                {
+                    highscore = reader.ReadInt32();
+                }
+                catch
+                {
+                    highscore = 0;
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            else
+            {
+                File.Create($"Highscore");
+                highscore = 0;
+            }
+
             base.Initialize();
         }
 
@@ -199,6 +224,18 @@ namespace FloodBuds
                         // Checks if the player has hit any debris.
                         else if (player.IsColliding(debrisList[i].Hitbox))
                         {
+                            // Updates their highscore if it's bigger than before.
+                            if (score > highscore)
+                            {
+                                highscore = score;
+
+                                FileStream file = File.OpenWrite($"Highscore");
+                                BinaryWriter writer = new BinaryWriter(file);
+
+                                writer.Write(highscore);
+                                writer.Close();
+                            }
+
                             player.Reset();
                             debrisList.Clear();
                             budsList.Clear();
