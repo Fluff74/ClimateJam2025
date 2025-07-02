@@ -56,6 +56,7 @@ namespace FloodBuds
         private Texture2D tire;
         private Texture2D driftWood;
         private Texture2D rock;
+        private Texture2D buds;
 
         #endregion
 
@@ -149,6 +150,7 @@ namespace FloodBuds
             tire = Content.Load<Texture2D>($"FB_Tire");
             driftWood = Content.Load<Texture2D>($"FB_DriftWood");
             rock = Content.Load<Texture2D>($"FB_Rock");
+            buds = Content.Load<Texture2D>($"FB_Buds");
 
             player = new Player(Content.Load<Texture2D>($"FB_Raft"));
             rescue = new Rescue(Content.Load<Texture2D>($"FB_Rescue"));
@@ -171,7 +173,7 @@ namespace FloodBuds
                     {
                         RandomizeWind();
                         gameState = GameState.Game;
-                        budsList.Add(new Buds(tempAsset));
+                        budsList.Add(new Buds(buds));
                         debrisList.Add(new Debris(score, driftWood, tire, rock));
                     }
 
@@ -284,7 +286,7 @@ namespace FloodBuds
                                 diffIncrement = 0;
                             }
 
-                            budsList.Add(new Buds(tempAsset));
+                            budsList.Add(new Buds(buds));
                         }
                     }
 
