@@ -26,12 +26,12 @@ namespace FloodBuds
         /// <param name="kb"> The current state of the player's keyboard. </param>
         /// <param name="xWind"> The force of the wind in the X-Axis. </param>
         /// <param name="yWind"> The force of the wind in the Y-Axis. </param>
-        public void Update(KeyboardState kb, int xWind, int yWind)
+        public void Update(KeyboardState kb, GamePadState gps, int xWind, int yWind)
         {
-            if (kb.IsKeyDown(Keys.W)) { hitbox.Y -= 7; }
-            if (kb.IsKeyDown(Keys.A)) { hitbox.X -= 7; }
-            if (kb.IsKeyDown(Keys.S)) { hitbox.Y += 7; }
-            if (kb.IsKeyDown(Keys.D)) { hitbox.X += 7; }
+            if (kb.IsKeyDown(Keys.W) || gps.IsButtonDown(Buttons.LeftThumbstickUp)) { hitbox.Y -= 7; }
+            if (kb.IsKeyDown(Keys.A) || gps.IsButtonDown(Buttons.LeftThumbstickLeft)) { hitbox.X -= 7; }
+            if (kb.IsKeyDown(Keys.S) || gps.IsButtonDown(Buttons.LeftThumbstickDown)) { hitbox.Y += 7; }
+            if (kb.IsKeyDown(Keys.D) || gps.IsButtonDown(Buttons.LeftThumbstickRight)) { hitbox.X += 7; }
 
             hitbox.Y += yWind;
             hitbox.X += xWind;

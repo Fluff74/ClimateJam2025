@@ -23,6 +23,8 @@ namespace FloodBuds
         private Rescue rescue;
         private KeyboardState kbs; // The current state of the keyboard.
         private KeyboardState pkbs; // The previous state of the keyboard.
+        private GamePadState gps; // The current state of the game controller.
+        private GamePadState pgps; // The current state of the game controller.
         private MouseState ms;
         private MouseState pms;
         private Matrix screenRes; // This will automatically scale our game to other people's screen sizes.
@@ -105,8 +107,8 @@ namespace FloodBuds
             capacityVec = new Vector2(20, 980);
             windVec = new Vector2(20, 1030);
             highscoreVec = new Vector2(1200, 300);
-            startInstructions = new Vector2(1340, 740);
-            quitInstructions = new Vector2(1000, 900);
+            startInstructions = new Vector2(1240, 740);
+            quitInstructions = new Vector2(900, 900);
 
             windTimer = rng.Next(12, 18);
             rescueTimer = rng.Next(12, 18);
@@ -160,6 +162,7 @@ namespace FloodBuds
         {
             kbs = Keyboard.GetState();
             ms = Mouse.GetState();
+            gps = GamePad.GetState(0);
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || kbs.IsKeyDown(Keys.Escape))
                 Exit();
@@ -169,7 +172,7 @@ namespace FloodBuds
                 case GameState.MainMenu:
 
                     // Start game functionality.
-                    if (SingleKeyPress(Keys.Enter))
+                    if (SingleKeyPress(Keys.Enter) || SingleButtonPress(Buttons.A))
                     {
                         RandomizeWind();
                         gameState = GameState.Game;
@@ -181,7 +184,7 @@ namespace FloodBuds
 
                 case GameState.Game:
 
-                    player.Update(Keyboard.GetState(), xWind, yWind); // Updates the player's location based on wind and input.
+                    player.Update(kbs, gps, xWind, yWind); // Updates the player's location based on wind and input.
 
                     windTimer -= gameTime.ElapsedGameTime.TotalSeconds;
                     rescueTimer -= gameTime.ElapsedGameTime.TotalSeconds;
@@ -294,7 +297,7 @@ namespace FloodBuds
 
                 case GameState.GameOver:
 
-                    if (SingleKeyPress(Keys.Enter))
+                    if (SingleKeyPress(Keys.Enter) || SingleButtonPress(Buttons.A))
                     {
                         gameState = GameState.MainMenu;
                     }
@@ -304,6 +307,7 @@ namespace FloodBuds
 
             pkbs = kbs;
             pms = ms;
+            pgps = gps;
             base.Update(gameTime);
         }
 
@@ -319,8 +323,8 @@ namespace FloodBuds
 
                     player.Draw(_spriteBatch);
                     _spriteBatch.Draw(fbLogo, fbLogoDrawRect, Color.White);
-                    _spriteBatch.DrawString(arial, $"Press 'enter' to start!", startInstructions, Color.Orange);
-                    _spriteBatch.DrawString(arial, $"Quit any time with `escape`", quitInstructions, Color.Orange);
+                    _spriteBatch.DrawString(arial, $"Press 'enter' or the 'a' button to start!", startInstructions, Color.Orange);
+                    _spriteBatch.DrawString(arial, $"Quit any time with `escape` or the `-` button.", quitInstructions, Color.Orange);
                     _spriteBatch.DrawString(arial, $"Highscore: {highscore}", highscoreVec, Color.Yellow);
 
                     break;
@@ -349,7 +353,7 @@ namespace FloodBuds
                 case GameState.GameOver:
 
                     _spriteBatch.Draw(gameOver, gameOverDrawRect, Color.White);
-                    _spriteBatch.DrawString(arial, $"       Press 'enter' to \nreturn to the main menu", startInstructions, Color.Orange);
+                    _spriteBatch.DrawString(arial, $"Press 'enter' or the 'a' button to \n     return to the main menu", startInstructions, Color.Orange);
 
                     break;
             }
@@ -367,6 +371,16 @@ namespace FloodBuds
         private bool SingleKeyPress(Keys key)
         {
             return kbs.IsKeyDown(key) && pkbs.IsKeyUp(key);
+        }
+
+        /// <summary>
+        /// Checks to see if the player pushed a button once.
+        /// </summary>
+        /// <param name="button"> The button we're checking. </param>
+        /// <returns> Whether or not it was pushed once. </returns>
+        private bool SingleButtonPress(Buttons button)
+        {
+            return gps.IsButtonDown(button) && pgps.IsButtonUp(button);
         }
 
         /// <summary>
