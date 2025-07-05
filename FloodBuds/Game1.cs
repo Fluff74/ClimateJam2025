@@ -419,11 +419,11 @@ namespace FloodBuds
             {
                 if (xWind < 0)
                 {
-                    windDir += "West";
+                    windDir = "West";
                 }
                 else if (xWind > 0)
                 {
-                    windDir += "East";
+                    windDir = "East";
                 }
                 else
                 {
