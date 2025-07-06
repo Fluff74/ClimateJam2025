@@ -45,6 +45,15 @@ namespace FloodBuds
         }
 
         /// <summary>
+        /// Resets the Rescue boat.
+        /// </summary>
+        public void Reset()
+        {
+            Active = false;
+            hitbox.X = -200;
+        }
+
+        /// <summary>
         /// Draws the rescue ship to the screen.
         /// </summary>
         /// <param name="sb"> The SpriteBatch we're drawing with. </param>

@@ -14,9 +14,9 @@ namespace FloodBuds
     // Hopefully it's good experience :)
     public class Game1 : Game
     {
-        private GraphicsDeviceManager _graphics;
+        private readonly GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private Random rng = new Random();
+        private readonly Random rng = new Random()!;
 
         private SpriteFont arial;
         private Player player;
@@ -25,8 +25,6 @@ namespace FloodBuds
         private KeyboardState pkbs; // The previous state of the keyboard.
         private GamePadState gps; // The current state of the game controller.
         private GamePadState pgps; // The current state of the game controller.
-        private MouseState ms;
-        private MouseState pms;
         private Matrix screenRes; // This will automatically scale our game to other people's screen sizes.
         private int score;
         private int highscore;
@@ -59,12 +57,14 @@ namespace FloodBuds
         private Texture2D driftWood;
         private Texture2D rock;
         private Texture2D buds;
+        private Texture2D waterBackdrop;
 
         #endregion
 
         #region Draw Locations
 
         private Rectangle fbLogoDrawRect;
+        private Rectangle background;
         private Rectangle gameOverDrawRect;
         private Vector2 scoreVec;
         private Vector2 capacityVec;
@@ -94,14 +94,15 @@ namespace FloodBuds
         protected override void Initialize()
         {
             gameState = GameState.MainMenu;
-            debrisList = new List<Debris>();
+            debrisList = [];
             screenRes = Matrix.CreateScale((float)_graphics.PreferredBackBufferWidth / 1920, (float)_graphics.PreferredBackBufferHeight / 1080, 1.0f);
             fbLogoDrawRect = new Rectangle(0, -60, 700, 700);
             gameOverDrawRect = new Rectangle(80, 20, 700, 700);
+            background = new Rectangle(0, 0, 1920, 1080);
             score = 0;
             diffIncrement = 0;
             currBuds = 0;
-            budsList = new List<Buds>();
+            budsList = [];
 
             scoreVec = new Vector2(20, 930);
             capacityVec = new Vector2(20, 980);
@@ -116,7 +117,7 @@ namespace FloodBuds
             if (File.Exists($"Highscore"))
             {
                 FileStream file = File.OpenRead($"Highscore");
-                BinaryReader reader = new BinaryReader(file);
+                BinaryReader reader = new(file);
 
                 try
                 {
@@ -153,6 +154,7 @@ namespace FloodBuds
             driftWood = Content.Load<Texture2D>($"FB_DriftWood");
             rock = Content.Load<Texture2D>($"FB_Rock");
             buds = Content.Load<Texture2D>($"FB_Buds");
+            waterBackdrop = Content.Load<Texture2D>("FB_Water");
 
             player = new Player(Content.Load<Texture2D>($"FB_Raft"));
             rescue = new Rescue(Content.Load<Texture2D>($"FB_Rescue"));
@@ -161,7 +163,6 @@ namespace FloodBuds
         protected override void Update(GameTime gameTime)
         {
             kbs = Keyboard.GetState();
-            ms = Mouse.GetState();
             gps = GamePad.GetState(0);
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || kbs.IsKeyDown(Keys.Escape))
@@ -235,7 +236,7 @@ namespace FloodBuds
                                 highscore = score;
 
                                 FileStream file = File.OpenWrite($"Highscore");
-                                BinaryWriter writer = new BinaryWriter(file);
+                                BinaryWriter writer = new(file);
 
                                 writer.Write(highscore);
                                 writer.Close();
@@ -244,6 +245,7 @@ namespace FloodBuds
                             player.Reset();
                             debrisList.Clear();
                             budsList.Clear();
+                            rescue.Reset();
                             score = 0;
                             currBuds = 0;
                             diffIncrement = 0;
@@ -306,7 +308,6 @@ namespace FloodBuds
             }
 
             pkbs = kbs;
-            pms = ms;
             pgps = gps;
             base.Update(gameTime);
         }
@@ -317,15 +318,17 @@ namespace FloodBuds
 
             _spriteBatch.Begin(transformMatrix: screenRes);
 
+            _spriteBatch.Draw(waterBackdrop, background, Color.White);
+
             switch (gameState)
             {
                 case GameState.MainMenu:
 
                     player.Draw(_spriteBatch);
                     _spriteBatch.Draw(fbLogo, fbLogoDrawRect, Color.White);
-                    _spriteBatch.DrawString(arial, $"Press 'enter' or the 'a' button to start!", startInstructions, Color.Orange);
-                    _spriteBatch.DrawString(arial, $"Quit any time with `escape` or the `-` button.", quitInstructions, Color.Orange);
-                    _spriteBatch.DrawString(arial, $"Highscore: {highscore}", highscoreVec, Color.Yellow);
+                    _spriteBatch.DrawString(arial, $"Press 'enter' or the 'a' button to start!", startInstructions, Color.Black);
+                    _spriteBatch.DrawString(arial, $"Quit any time with `escape` or the `-` button.", quitInstructions, Color.Black);
+                    _spriteBatch.DrawString(arial, $"Highscore: {highscore}", highscoreVec, Color.Black);
 
                     break;
 
@@ -344,16 +347,16 @@ namespace FloodBuds
                     rescue.Draw(_spriteBatch);
                     player.Draw(_spriteBatch);
 
-                    _spriteBatch.DrawString(arial, $"Score: {score}", scoreVec, Color.White);
-                    _spriteBatch.DrawString(arial, $"Buds Capacity: {currBuds}/7", capacityVec, Color.White);
-                    _spriteBatch.DrawString(arial, $"Wind Direction: {windDir}", windVec, Color.White);
+                    _spriteBatch.DrawString(arial, $"Score: {score}", scoreVec, Color.Black);
+                    _spriteBatch.DrawString(arial, $"Buds Capacity: {currBuds}/7", capacityVec, Color.Black);
+                    _spriteBatch.DrawString(arial, $"Wind Direction: {windDir}", windVec, Color.Black);
 
                     break;
 
                 case GameState.GameOver:
 
                     _spriteBatch.Draw(gameOver, gameOverDrawRect, Color.White);
-                    _spriteBatch.DrawString(arial, $"Press 'enter' or the 'a' button to \n     return to the main menu", startInstructions, Color.Orange);
+                    _spriteBatch.DrawString(arial, $"Press 'enter' or the 'a' button to \n     return to the main menu", startInstructions, Color.Black);
 
                     break;
             }
